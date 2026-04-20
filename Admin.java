@@ -7,9 +7,9 @@ public class Admin extends User{
         super(id, name, email);
     }
 
-    void printAllOrders(List<Order> orders){
+    public void printAllOrders(List<Order> orders){
         for(Order order: orders){
-            order.toString();
+            System.out.println(order.toString());
         }
     }
 }

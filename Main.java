@@ -18,6 +18,10 @@ public class Main {
         order.addProduct(p1);
         order.addProduct(p2);
         order.addProduct(p3);
+        order.addProduct(p3);
+        order.addProduct(p3);
+        order.addProduct(p3);
+        order.addProduct(p3);
         order.addProduct(p4);
 
         try{
@@ -27,7 +31,7 @@ public class Main {
         }
 
         try {
-            order.removeProduct(p1);
+            order.removeProduct(p1, 1);
         } catch (Exception e) {
             System.out.println("PASS: remove non-existing product");
         }
@@ -48,7 +52,7 @@ public class Main {
         System.out.println("Total price: " + order.getTotalPrice());
         System.out.println("Product count: " + order.getProductCount());
 
-        order.removeProduct(p2);
+        order.removeProduct(p3, 1);
 
         System.out.println("***********************");
         System.out.println("Total price: " + order.getTotalPrice());

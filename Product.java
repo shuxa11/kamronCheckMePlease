@@ -1,7 +1,7 @@
 package org.example;
 
 public class Product {
-    private Long id;
+    private final Long id;
     private String name;
     private double price;
 
@@ -25,9 +25,6 @@ public class Product {
     }
     public double getPrice() {
         return price;
-    }
-    public void setId(Long id) {
-        this.id = id;
     }
     public void setName(String name) {
         if(name == null || name.trim().isEmpty()) {

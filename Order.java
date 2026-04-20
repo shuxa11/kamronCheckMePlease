@@ -1,13 +1,11 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Order {
     private Long id;
     private User user;
-    private List<Product> products = new ArrayList<>();
+    private Map<Product, Integer> productCounts = new HashMap<>();
 
 
     public Order(Long id, User user) {
@@ -18,8 +16,8 @@ public class Order {
         this.user = user;
     }
 
-    public List<Product> getProducts(){
-        return Collections.unmodifiableList(products);
+    public Map<Product, Integer> getProducts(){
+        return Collections.unmodifiableMap(productCounts);
     }
 
 
@@ -28,37 +26,57 @@ public class Order {
         if(product == null){
             throw new IllegalArgumentException("Product cannot be null");
         }
-        products.add(product);
+        productCounts.put(product, productCounts.getOrDefault(product, 0) + 1);
     }
 
-    public void removeProduct(Product product) {
+    public void removeProduct(Product product,int count) {
         if(product == null){
             throw new IllegalArgumentException("Product cannot be null");
         }
-        if(!products.remove(product)){
+        if(count <= 0){
+            throw new IllegalArgumentException("Quantity cannot be less than zero");
+        }
+        if(!productCounts.containsKey(product)){
             throw new IllegalArgumentException("Product not found");
         }
-    }
-    
 
+        Integer prCount = productCounts.get(product);
 
-    public double getTotalPrice(){
-        double total = 0.0;
-        for(Product product: products){
-            total += product.getPrice();
+        if(prCount < count ){
+            throw new IllegalArgumentException("in the order there is less amount of products than you asked to remove");
         }
+        if(prCount - count == 0){
+            productCounts.remove(product);
+        }else{
+            productCounts.put(product, productCounts.get(product) - count);
+        }
+    }
+
+
+
+    public double getTotalPrice() {
+        double total = 0.0;
+
+        for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
+            total += entry.getKey().getPrice() * entry.getValue();
+        }
+
         return total;
     }
 
     public int getProductCount(){
-        return products.size();
+        int total = 0;
+        for (int count: productCounts.values()){
+            total += count;
+        }
+        return total;
     }
 
     @Override
     public String toString() {
         return "Order{id=" + id +
                 ", user=" + user.getName() +
-                ", products=" + products.size() +
+                ", products=" + getProductCount() +
                 ", total=" + getTotalPrice() +
                 '}';
     }
