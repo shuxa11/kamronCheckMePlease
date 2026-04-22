@@ -26,7 +26,11 @@ public class User {
         return email;
     }
     public void setName(String name) {
-        this.name = name;
+        if(name == null){
+            throw new IllegalArgumentException("User can not be null");
+        }else {
+            this.name = name;
+        }
     }
     public void setEmail(String email) {
         if(email == null || email.trim().isEmpty()) {
