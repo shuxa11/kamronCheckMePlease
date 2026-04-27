@@ -15,7 +15,7 @@ public class Main {
       Order order1 = service.createOrder(2L, user);
 
       service.addProduct(order, p3, 5);
-      service.addProduct(order, p1, 12);
+      service.addProduct(order, p1, 15);
       service.addProduct(order1, p2, 15);
 
       double total = service.checkout(order);
