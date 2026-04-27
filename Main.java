@@ -18,7 +18,7 @@ public class Main {
         service.addProduct(order, p1, 12);
         service.addProduct(order1, p2, 15);
 
-        double total = service.checkout(order1);
+        double total = service.checkout(order);
         System.out.println("Paid: " + total);
 
 

@@ -3,9 +3,9 @@ package org.example;
 import java.util.*;
 
 public class Order {
-    private Long id;
-    private User user;
-    private Map<Product, Integer> productCounts = new HashMap<>();
+    private final Long id;
+    private final User user;
+    private List<OrderItem> items = new ArrayList<>();
     private OrderStatus status;
 
     public Order(Long id, User user) {
@@ -17,76 +17,97 @@ public class Order {
         this.status = OrderStatus.NEW;
     }
 
-    public Map<Product, Integer> getProducts(){
-        return Collections.unmodifiableMap(productCounts);
+    public List<OrderItem> getItems(){
+        return Collections.unmodifiableList(items);
     }
 
     public OrderStatus getStatus(){
         return status;
     }
 
-    public void setStatus(OrderStatus status){
-        if(this.status == OrderStatus.NEW && status != OrderStatus.NEW){
-            this.status = status;
-        }
+    public void markPaid(){
         if(this.status != OrderStatus.NEW){
-            throw new InvalidOrderStateException("Can not modify finalized order's state");
+            throw new InvalidOrderStateException("Order already finalized ");
         }
+        this.status = OrderStatus.PAID;
+    }
 
+    public void cancel(){
+        if(this.status != OrderStatus.NEW){
+            throw new InvalidOrderStateException("Order already finalized");
+        }
+        this.status = OrderStatus.CANCELLED;
     }
 
     public void addProduct(Product product, int qty) {
-        if(status != OrderStatus.NEW){
+        if(this.status != OrderStatus.NEW){
             throw new InvalidOrderStateException("Can not modify finalized order");
         }
         if(product == null){
             throw new IllegalArgumentException("Product cannot be null");
         }
         if(qty <= 0){
-            throw new IllegalArgumentException("Quantity cannot be negative");
+            throw new IllegalArgumentException("Quantity should be positive");
         }
-        productCounts.put(product, productCounts.getOrDefault(product, 0) + qty);
+        for(OrderItem item : items){
+            if(item.getPriceAtPurchase() == product.getPrice() && item.getProduct().equals(product)){
+                item.increaseQty(qty);
+                return;
+            }
+
+        }
+        items.add(new OrderItem(product, qty));
+
     }
 
     public void removeProduct(Product product,int count) {
+        if(this.status != OrderStatus.NEW){
+            throw new InvalidOrderStateException("Can not modify finalized order");
+        }
         if(product == null){
             throw new IllegalArgumentException("Product cannot be null");
         }
         if(count <= 0){
             throw new IllegalArgumentException("Quantity should be positive");
         }
-        if(!productCounts.containsKey(product)){
-            throw new ProductNotFoundException("Product not found");
+
+        Iterator<OrderItem> it = items.iterator();
+
+        while (it.hasNext()){
+            OrderItem item = it.next();
+
+            if (item.getPriceAtPurchase() == product.getPrice() &&
+                    item.getProduct().equals(product)){
+                if (item.getQty() < count){
+                    throw new IllegalArgumentException("Not enough quantity of product");
+                }
+
+                item.decreaseQty(count);
+
+                if (item.getQty() == 0) {
+                    it.remove();
+                }
+
+                return;
+            }
         }
 
-        Integer prCount = productCounts.get(product);
+        throw new ProductNotFoundException("Product not found");
 
-        if(prCount < count ){
-            throw new IllegalArgumentException("in the order there is less products than you asked to remove");
-        }
-        if(prCount - count == 0){
-            productCounts.remove(product);
-        }else{
-            productCounts.put(product, productCounts.get(product) - count);
-        }
-    }
-
-
-
-    public double getTotalPrice() {
-        double total = 0.0;
-
-        for (Map.Entry<Product, Integer> entry : productCounts.entrySet()) {
-            total += entry.getKey().getPrice() * entry.getValue();
-        }
-
-        return total;
     }
 
     public int getProductCount(){
         int total = 0;
-        for (int count: productCounts.values()){
-            total += count;
+        for (OrderItem item: items){
+            total += item.getQty();
+        }
+        return total;
+    }
+
+    public double getTotalPrice(){
+        double total = 0;
+        for (OrderItem item: items){
+            total += item.getPriceAtPurchase() * item.getQty();
         }
         return total;
     }
