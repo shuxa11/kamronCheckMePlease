@@ -1,25 +1,25 @@
 package org.example;
 
 public class Main {
-     public static void main(String[] args) {
-        User user = new User(111L, "shuxa", "saka@gmail.com");
-        Admin admin = new Admin(222L, "pipang admin", "pipang@gmail.com");
+   public static void main(String[] args) {
+      User user = new User(111L, "shuxa", "saka@gmail.com");
+      Admin admin = new Admin(222L, "pipang admin", "pipang@gmail.com");
 
-        OrderService service = new OrderService();
-        Product p1 = new Product(1L, "Laptop", 1200.0);
-        Product p2 = new Product(2L, "Mouse", 25.0);
-        Product p3 = new Product(3L, "Keyboard", 75.0);
-        Product p4 = new Product(4L, "Monitor", 300.0);
+      OrderService service = new OrderService();
+      Product p1 = new Product(1L, "Laptop", 1200.0);
+      Product p2 = new Product(2L, "Mouse", 25.0);
+      Product p3 = new Product(3L, "Keyboard", 75.0);
+      Product p4 = new Product(4L, "Monitor", 300.0);
 
-        Order order = service.createOrder(1L, user);
-        Order order1 = service.createOrder(2L, user);
+      Order order = service.createOrder(1L, user);
+      Order order1 = service.createOrder(2L, user);
 
-        service.addProduct(order, p3, 5);
-        service.addProduct(order, p1, 12);
-        service.addProduct(order1, p2, 15);
+      service.addProduct(order, p3, 5);
+      service.addProduct(order, p1, 12);
+      service.addProduct(order1, p2, 15);
 
-        double total = service.checkout(order);
-        System.out.println("Paid: " + total);
+      double total = service.checkout(order);
+      System.out.println("Paid: " + total);
 
 
 
