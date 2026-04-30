@@ -1,15 +1,19 @@
 package org.example;
 
 public class OrderItem {
-    private final Product product;
+    private final Long productId;
+    private final String productName;
     private int qty;
     private final double priceAtPurchase;
 
-    public Product  getProduct(){
-        return this.product;
+    public Long getProductId(){
+        return this.productId;
     }
     public double getPriceAtPurchase(){
         return this.priceAtPurchase;
+    }
+    public String getProductName(){
+        return this.productName;
     }
     public int getQty(){
         return this.qty;
@@ -22,7 +26,8 @@ public class OrderItem {
         if (qty <= 0){
             throw new IllegalArgumentException("Quantity must be positive");
         }
-        this.product = product;
+        this.productId = product.getId();
+        this.productName = product.getName();
         this.qty = qty;
         this.priceAtPurchase = product.getPrice();
     }

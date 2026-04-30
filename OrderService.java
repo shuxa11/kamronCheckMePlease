@@ -1,40 +1,51 @@
 package org.example;
 
 public class OrderService {
-    public Order createOrder(Long id, User user) {
-        if(user == null){
-            throw new IllegalArgumentException("User can not be null");
-        }
-        return new Order(id, user);
+    private final OrderRepository orderRepo;
+    private final ProductRepository productRepo;
+    private final UserRepository userRepo;
+
+    public OrderService(OrderRepository orderRepo,
+                        ProductRepository productRepo,
+                        UserRepository userRepo){
+        this.orderRepo = orderRepo;
+        this.productRepo = productRepo;
+        this.userRepo = userRepo;
     }
 
-    public void addProduct(Order order, Product product, int qty){
-        if (product == null || qty <= 0) {
-            throw new IllegalArgumentException("Invalid product or quantity");
-        }
+    public Order createOrder(Long id, Long userId){
+        User user = userRepo.findById(userId);
+        Order order = new Order(id, user);
+        orderRepo.save(order);
+        return order;
+    }
+    public void addProduct(Long orderId, Long productId, int qty){
+        Order order = orderRepo.findById(orderId);
+        Product product = productRepo.findById(productId);
         order.addProduct(product, qty);
     }
 
-    public void removeProduct(Order order, Product product, int qty){
-        if (product == null || qty <= 0) {
-            throw new IllegalArgumentException("Invalid product or quantity");
-        }
-        if (order.getStatus() != OrderStatus.NEW) {
-            throw new InvalidOrderStateException("This order is already paid or cancelled");
-        }
+    public void removeProduct(Long orderId, Long productId, int qty){
+        Order order = orderRepo.findById(orderId);
+        Product product = productRepo.findById(productId);
+
         order.removeProduct(product, qty);
     }
 
-    public double checkout(Order order){
-        if(order.getItems().isEmpty()){
-            throw new EmptyOrderException("This order is empty");
+    public double checkout(Long orderId){
+        Order order = orderRepo.findById(orderId);
+        if(order == null){
+            throw new OrderNotFoundException("Order not found");
+        }
+        if(order.getStatus() != OrderStatus.NEW){
+            throw new InvalidOrderStateException("Can not modify finalized order");
         }
         order.markPaid();
         return order.getTotalPrice();
-
     }
 
-    public void cancel(Order order){
+    public void cancel(Long orderId){
+        Order order = orderRepo.findById(orderId);
         order.cancel();
     }
 

@@ -5,7 +5,7 @@ import java.util.*;
 public class Order {
     private final Long id;
     private final User user;
-    private List<OrderItem> items = new ArrayList<>();
+    private final List<OrderItem> items = new ArrayList<>();
     private OrderStatus status;
 
     public Order(Long id, User user) {
@@ -24,6 +24,8 @@ public class Order {
     public OrderStatus getStatus(){
         return status;
     }
+
+    public Long getId(){ return id; }
 
     public void markPaid(){
         if(this.status != OrderStatus.NEW){
@@ -50,7 +52,8 @@ public class Order {
             throw new IllegalArgumentException("Quantity should be positive");
         }
         for(OrderItem item : items){
-            if(item.getPriceAtPurchase() == product.getPrice() && item.getProduct().equals(product)){
+            if(item.getProductId().equals(product.getId()) &&
+                    item.getPriceAtPurchase() == product.getPrice()){
                 item.increaseQty(qty);
                 return;
             }
@@ -76,8 +79,8 @@ public class Order {
         while (it.hasNext()){
             OrderItem item = it.next();
 
-            if (item.getPriceAtPurchase() == product.getPrice() &&
-                    item.getProduct().equals(product)){
+            if (item.getProductId().equals(product.getId()) &&
+                    item.getPriceAtPurchase() == product.getPrice()){
                 if (item.getQty() < count){
                     throw new IllegalArgumentException("Not enough quantity of product");
                 }

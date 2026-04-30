@@ -2,7 +2,7 @@ package org.example;
 
 public class Product {
     private final Long id;
-    private String name;
+    private final String name;
     private double price;
 
     public Product(Long id, String name, double price) {
@@ -25,12 +25,6 @@ public class Product {
     }
     public double getPrice() {
         return price;
-    }
-    public void setName(String name) {
-        if(name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-        this.name = name;
     }
     public void setPrice(double price) {
         if(price <= 0) {
