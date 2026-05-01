@@ -19,14 +19,19 @@ public class Main {
       productRepo.save(p3);
       productRepo.save(p4);
 
-      Order order = service.createOrder(1L, 111L);
-      Order order1 = service.createOrder(2L, 111L);
+      OrderController controller = new OrderController(service);
 
-      service.addProduct(1L, 2L, 5);
-      service.addProduct(1L, 1L, 15);
-      service.addProduct(2L, 2L, 15);
+      controller.createOrder(new OrderCreateRequest(1L, 111L));
+      controller.createOrder(new OrderCreateRequest(2L, 111L));
 
-      double total = service.checkout(2L);
+      controller.addProduct(new AddProductRequest(1L, 2L, 5));
+      controller.addProduct(new AddProductRequest(1L, 1L, 15));
+      controller.addProduct(new AddProductRequest(2L, 2L, 15));
+
+      controller.removeProduct(new RemoveProductRequest(1L, 2L, 10));
+
+      double total = controller.checkout(1L);
+
       System.out.println("Paid: " + total);
    }
 }
