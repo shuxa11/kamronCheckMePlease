@@ -10,7 +10,7 @@ public class OrderRepository {
 
     public void save(Order order) {
         if (storage.containsKey(order.getId())){
-            throw new DuplicateOrderException("This order already exists");
+                throw new DuplicateOrderException("This order already exists");
         }
         storage.put(order.getId(), order);
     }
